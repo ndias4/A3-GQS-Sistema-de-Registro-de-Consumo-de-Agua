@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { adicionarConsumo, obterConsumos, obterConsumoPeriodo } from "../controllers/consumoController.js";
+import { adicionarConsumo, obterConsumos, obterConsumoPeriodo, gerarRelatorioMensal } from "../controllers/consumoController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = Router();
@@ -11,5 +11,6 @@ router.use(authMiddleware);
 router.post("/", adicionarConsumo);
 router.get("/", obterConsumos);
 router.get("/periodo", obterConsumoPeriodo);
+router.get("/relatorio/mensal", gerarRelatorioMensal);
 
 export default router;

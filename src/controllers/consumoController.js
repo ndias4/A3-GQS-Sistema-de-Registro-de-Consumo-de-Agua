@@ -1,4 +1,5 @@
 import { registrarConsumo, listarConsumos, listarConsumoPorPeriodo } from "../models/consumoModel.js";
+import * as ConsumoModel from "../models/consumoModel.js";
 
 // Cálculo simples de valor estimado (exemplo fictício)
 function calcularValorEstimado(litros) {
@@ -54,5 +55,25 @@ export async function obterConsumoPeriodo(req, res) {
     res.json(consumos);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+}
+
+export async function gerarRelatorioMensal(req, res) {
+  try {
+    const { id, role } = req.usuario;
+    let relatorio;
+
+    if (role === 'admin') {
+      // Se for admin, busca o relatório geral
+      relatorio = await ConsumoModel.gerarRelatorioMensalGeral();
+    } else {
+      // Se for usuário comum, busca o relatório apenas para seu ID
+      relatorio = await ConsumoModel.gerarRelatorioMensalPorUsuario(id);
+    }
+
+    res.json(relatorio);
+  } catch (error) {
+    console.error('Erro ao gerar relatório mensal:', error);
+    res.status(500).json({ message: "Erro interno no servidor." });
   }
 }
