@@ -1,9 +1,16 @@
 import { Router } from "express";
-import { obterAlertas } from "../controllers/alertaController.js";
+import { listarAlertasDoUsuario, marcarAlertaComoLido } from "../controllers/alertaController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.get("/", authMiddleware, obterAlertas);
+// Aplica o middleware de autenticação a todas as rotas de alertas
+router.use(authMiddleware);
+
+// Rota para o usuário logado buscar seus alertas
+router.get("/", listarAlertasDoUsuario);
+
+// Rota para o usuário marcar um alerta específico como lido
+router.patch("/:id/lido", marcarAlertaComoLido);
 
 export default router;
