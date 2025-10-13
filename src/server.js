@@ -1,24 +1,22 @@
-import express from "express";
-import cors from "cors";
-import userRoutes from "./routes/userRoutes.js";
-import consumoRoutes from "./routes/consumoRoutes.js";
-import alertaRoutes from "./routes/alertaRoutes.js";
-import dicaRoutes from "./routes/dicaRoutes.js";
-import testRoutes from "./routes/testRoutes.js";
+import dotenv from 'dotenv';
+
+// Carrega as variáveis de ambiente corretas (dev ou teste)
+if (process.env.NODE_ENV === 'test') {
+    dotenv.config({ path: '.env.test' });
+} else {
+    dotenv.config();
+}
+
+import app from './app.js'; // Importa a configuração do Express
 import { iniciarSimuladorIoT } from './services/simulationService.js';
+import { iniciarVerificadorDeAlertas } from './services/alertService.js';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Rotas
-app.use("/api/users", userRoutes);
-app.use("/api/consumos", consumoRoutes);
-app.use("/api/alertas", alertaRoutes);
-app.use("/api/dicas", dicaRoutes);
-app.use("/api", testRoutes);
-
-iniciarSimuladorIoT();
-
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+// A lógica de iniciar o servidor e os serviços
+if (process.env.NODE_ENV !== 'test') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Servidor rodando na porta ${PORT}`);
+        iniciarSimuladorIoT();
+        iniciarVerificadorDeAlertas();
+    });
+}
