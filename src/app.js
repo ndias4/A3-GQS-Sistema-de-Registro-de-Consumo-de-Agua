@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 import consumoRoutes from './routes/consumoRoutes.js';
 import dicaRoutes from './routes/dicaRoutes.js';
@@ -7,6 +8,7 @@ import alertaRoutes from './routes/alertaRoutes.js';
 const app = express();
 
 // Middlewares
+app.use(cors());
 app.use(express.json());
 
 // ROTAS DA APLICAÇÃO
