@@ -1,8 +1,8 @@
 // src/services/simulationService.js
 
 import cron from 'node-cron';
-import { pool } from '../config/db.js';
-import { registrarConsumo } from '../models/consumoModel.js'; // Reutilizaremos a função que já existe!
+import { pool } from '../config/db.mjs';
+import { registrarConsumo } from '../models/consumoModel.mjs'; // Reutilizaremos a função que já existe!
 
 // Função que gera um valor de consumo diário aleatório (em litros)
 function gerarConsumoAleatorio() {

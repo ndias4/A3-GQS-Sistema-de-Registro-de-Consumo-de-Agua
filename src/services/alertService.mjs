@@ -1,6 +1,6 @@
 // src/services/alertService.js
 import cron from 'node-cron';
-import { pool } from '../config/db.js';
+import { pool } from '../config/db.mjs';
 
 async function verificarEGerarAlertas() {
     console.log('--- Iniciando verificação de consumo para alertas ---');

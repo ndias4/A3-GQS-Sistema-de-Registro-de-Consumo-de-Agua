@@ -7,9 +7,9 @@ if (process.env.NODE_ENV === 'test') {
     dotenv.config();
 }
 
-import app from './app.js'; // Importa a configuração do Express
-import { iniciarSimuladorIoT } from './services/simulationService.js';
-import { iniciarVerificadorDeAlertas } from './services/alertService.js';
+import app from './app.mjs'; // Importa a configuração do Express
+import { iniciarSimuladorIoT } from './services/simulationService.mjs';
+import { iniciarVerificadorDeAlertas } from './services/alertService.mjs';
 
 // A lógica de iniciar o servidor e os serviços
 if (process.env.NODE_ENV !== 'test') {
