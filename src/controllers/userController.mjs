@@ -34,6 +34,8 @@ export const registerUser = async (req, res) => {
       user: result.rows[0],
     });
   } catch (error) {
+    console.error("ERRO DETALHADO NO REGISTRO:", error);
+    
     res.status(500).json({ message: error.message });
   }
 };
