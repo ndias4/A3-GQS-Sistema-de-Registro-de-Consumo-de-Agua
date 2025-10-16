@@ -1,4 +1,4 @@
-import { pool } from "../config/db.js";
+import { pool } from "../config/db.mjs";
 
 export async function registrarConsumo(usuarioId, litros, valorEstimado) {
     const query = `

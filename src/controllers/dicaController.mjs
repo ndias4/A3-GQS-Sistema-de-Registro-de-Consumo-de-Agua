@@ -1,4 +1,4 @@
-import * as DicaModel from '../models/dicaModel.js';
+import * as DicaModel from '../models/dicaModel.mjs';
 
 // Lista todas as dicas
 export async function listarDicas(req, res) {

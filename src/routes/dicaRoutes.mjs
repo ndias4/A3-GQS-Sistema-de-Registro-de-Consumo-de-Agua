@@ -5,10 +5,10 @@ import {
     criarDica, 
     atualizarDica, 
     deletarDica 
-} from "../controllers/dicaController.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+} from "../controllers/dicaController.mjs";
+import { authMiddleware } from "../middleware/authMiddleware.mjs";
 // 2. Precisamos importar o middleware de admin
-import { isAdmin } from "../middleware/isAdminMiddleware.js";
+import { isAdmin } from "../middleware/isAdminMiddleware.mjs";
 
 const router = Router();
 

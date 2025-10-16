@@ -1,4 +1,4 @@
-import { pool } from "../config/db.js";
+import { pool } from "../config/db.mjs";
 
 export async function createUser(nome, email, senhaHash) {
   const result = await pool.query(

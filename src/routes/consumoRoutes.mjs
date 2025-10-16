@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { adicionarConsumo, obterConsumos, obterConsumoPeriodo, gerarRelatorioMensal,  calcularEstimativaMensal } from "../controllers/consumoController.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import { adicionarConsumo, obterConsumos, obterConsumoPeriodo, gerarRelatorioMensal,  calcularEstimativaMensal } from "../controllers/consumoController.mjs";
+import { authMiddleware } from "../middleware/authMiddleware.mjs";
 
 const router = Router();
 

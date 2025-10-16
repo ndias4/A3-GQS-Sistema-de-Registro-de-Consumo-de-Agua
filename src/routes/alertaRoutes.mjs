@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { listarAlertasDoUsuario, marcarAlertaComoLido } from "../controllers/alertaController.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import { listarAlertasDoUsuario, marcarAlertaComoLido } from "../controllers/alertaController.mjs";
+import { authMiddleware } from "../middleware/authMiddleware.mjs";
 
 const router = Router();
 

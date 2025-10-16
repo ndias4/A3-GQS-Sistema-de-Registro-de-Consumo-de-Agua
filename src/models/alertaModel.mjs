@@ -1,5 +1,5 @@
 // src/models/alertaModel.js
-import { pool } from '../config/db.js';
+import { pool } from '../config/db.mjs';
 
 /**
  * Lista todos os alertas de um usuário específico,

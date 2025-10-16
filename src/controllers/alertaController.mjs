@@ -1,4 +1,4 @@
-import * as AlertaModel from '../models/alertaModel.js';
+import * as AlertaModel from '../models/alertaModel.mjs';
 
 /**
  * Busca e retorna todos os alertas para o usuário que fez a requisição.

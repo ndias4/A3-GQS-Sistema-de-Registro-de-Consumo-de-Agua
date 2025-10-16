@@ -1,6 +1,6 @@
 import request from 'supertest';
-import app from '../src/app.js';
-import { pool } from '../src/config/db.js';
+import app from '../src/app.mjs';
+import { pool } from '../src/config/db.mjs';
 
 describe('Testes das Rotas de Consumo (Protegidas)', () => {
     let token;

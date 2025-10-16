@@ -1,5 +1,5 @@
-import { registrarConsumo, listarConsumos, listarConsumoPorPeriodo } from "../models/consumoModel.js";
-import * as ConsumoModel from "../models/consumoModel.js";
+import { registrarConsumo, listarConsumos, listarConsumoPorPeriodo } from "../models/consumoModel.mjs";
+import * as ConsumoModel from "../models/consumoModel.mjs";
 
 // Cálculo simples de valor estimado (exemplo fictício)
 function calcularValorEstimado(litros) {

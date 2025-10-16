@@ -1,4 +1,4 @@
-import { pool } from '../config/db.js';
+import { pool } from '../config/db.mjs';
 
 // Lista todas as dicas do banco
 export async function listar() {
