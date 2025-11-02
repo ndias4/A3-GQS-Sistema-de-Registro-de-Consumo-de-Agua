@@ -67,16 +67,16 @@ export async function gerarRelatorioMensal(req, res) {
     let relatorio;
 
     if (role === 'admin') {
-      // Se for admin, busca o relatório geral
-      relatorio = await ConsumoModel.gerarRelatorioMensalGeral();
+      // Chama a nova função unificada SEM argumento
+      relatorio = await ConsumoModel.gerarRelatorioMensal();
     } else {
-      // Se for usuário comum, busca o relatório apenas para seu ID
-      relatorio = await ConsumoModel.gerarRelatorioMensalPorUsuario(id);
+      // Chama a nova função unificada COM o ID do usuário
+      relatorio = await ConsumoModel.gerarRelatorioMensal(id);
     }
 
     res.json(relatorio);
   } catch (error) {
-    console.error('Erro ao gerar relatório mensal:', error);
+    console.error("Erro ao gerar relatório mensal:", error); // O log que você viu
     res.status(500).json({ message: "Erro interno no servidor." });
   }
 }
