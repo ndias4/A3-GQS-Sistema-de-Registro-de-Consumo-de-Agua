@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { pool } from "../config/db.mjs";
 import dotenv from "dotenv";
+import * as UserModel from '../models/userModel.mjs';
 
 dotenv.config();
 
@@ -90,5 +91,48 @@ export const getAllUsers = async (req, res) => {
   } catch (error) {
     console.error("Erro ao buscar todos os usuários:", error);
     res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    // O ID do usuário vem do token, que foi verificado pelo authMiddleware
+    const userId = req.usuario.id; 
+    
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado.' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Erro ao buscar perfil:", error);
+    res.status(500).json({ message: "Erro interno no servidor." });
+  }
+};
+// PUT /api/users/me
+export const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.usuario.id;
+    const { nome, email } = req.body;
+
+    if (!nome || !email) {
+      return res.status(400).json({ message: 'Nome e email são obrigatórios.' });
+    }
+
+    // Verifica se o novo email já está em uso por OUTRO usuário
+    const existingUser = await UserModel.findByEmail(email);
+    if (existingUser && existingUser.id !== userId) {
+      return res.status(400).json({ message: 'Este email já está em uso por outra conta.' });
+    }
+
+    // Atualiza o usuário no banco
+    const userAtualizado = await UserModel.updateUser(userId, nome, email);
+    
+    res.json(userAtualizado);
+  } catch (error) {
+    console.error("Erro ao atualizar perfil:", error);
+    res.status(500).json({ message: "Erro interno no servidor." });
   }
 };
