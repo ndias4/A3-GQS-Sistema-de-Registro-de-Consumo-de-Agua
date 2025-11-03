@@ -1,75 +1,53 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { pool } from "../config/db.mjs";
-import dotenv from "dotenv";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import * as UserModel from '../models/userModel.mjs';
 
-dotenv.config();
-
-// Registro de usuário
+// Função de Registro
 export const registerUser = async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
-
     if (!nome || !email || !senha) {
       return res.status(400).json({ message: "Todos os campos são obrigatórios." });
     }
 
-    // Verifica se o email já existe
-    const userExists = await pool.query("SELECT * FROM usuarios WHERE email = $1", [email]);
-    if (userExists.rows.length > 0) {
+    const userExists = await UserModel.findByEmail(email);
+    if (userExists) {
       return res.status(400).json({ message: "Email já cadastrado." });
     }
 
-    // Criptografa a senha
     const hashedPassword = await bcrypt.hash(senha, 10);
-
-    // Insere o novo usuário
-    const result = await pool.query(
-      "INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3) RETURNING id, nome, email",
-      [nome, email, hashedPassword]
-    );
+    
+    // 2. USAMOS O MODEL
+    const user = await UserModel.createUser(nome, email, hashedPassword);
 
     res.status(201).json({
       message: "Usuário cadastrado com sucesso!",
-      user: result.rows[0],
+      user: user,
     });
   } catch (error) {
     console.error("ERRO DETALHADO NO REGISTRO:", error);
-    
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
   }
 };
 
-// Login de usuário
+// Função de Login
 export const loginUser = async (req, res) => {
   try {
     const { email, senha } = req.body;
-
-    const result = await pool.query("SELECT id, nome, email, senha, role FROM usuarios WHERE email = $1", [email]);
-    if (result.rows.length === 0) {
+    
+    // 3. USAMOS O MODEL
+    const user = await UserModel.findByEmail(email);
+    if (!user) {
       return res.status(400).json({ message: "Usuário não encontrado." });
     }
 
-    const user = result.rows[0];
-
-    // Verifica a senha
     const isMatch = await bcrypt.compare(senha, user.senha);
     if (!isMatch) {
       return res.status(401).json({ message: "Senha incorreta." });
     }
 
-    const payload = { 
-      id: user.id, 
-      role: user.role 
-    };
-
-    // Gera o token JWT
-    const token = jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "8h" }
-    );
+    const payload = { id: user.id, role: user.role };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '8h' });
 
     res.json({
       message: "Login bem-sucedido!",
@@ -77,40 +55,32 @@ export const loginUser = async (req, res) => {
       user: { id: user.id, nome: user.nome, email: user.email, role: user.role },
     });
   } catch (error) {
-    console.error("ERRO NO LOGIN:", error);
+    console.error("ERRO DETALHADO NO LOGIN:", error);
     res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
   }
 };
 
-export const getAllUsers = async (req, res) => {
-  try {
-    // Buscamos todos os usuários, mas excluímos a senha do retorno por segurança.
-    const result = await pool.query("SELECT id, nome, email, role FROM usuarios ORDER BY nome ASC");
-    
-    res.json(result.rows);
-  } catch (error) {
-    console.error("Erro ao buscar todos os usuários:", error);
-    res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
-  }
-};
-
+// --- FUNÇÃO NOVA ---
+// GET /api/users/me
 export const getUserProfile = async (req, res) => {
   try {
-    // O ID do usuário vem do token, que foi verificado pelo authMiddleware
+    // O ID do usuário vem do token (anexado pelo authMiddleware)
     const userId = req.usuario.id; 
     
+    // 4. USAMOS O MODEL
     const user = await UserModel.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado.' });
     }
-
     res.json(user);
   } catch (error) {
     console.error("Erro ao buscar perfil:", error);
     res.status(500).json({ message: "Erro interno no servidor." });
   }
 };
+
+// --- FUNÇÃO NOVA ---
 // PUT /api/users/me
 export const updateUserProfile = async (req, res) => {
   try {
@@ -121,18 +91,30 @@ export const updateUserProfile = async (req, res) => {
       return res.status(400).json({ message: 'Nome e email são obrigatórios.' });
     }
 
-    // Verifica se o novo email já está em uso por OUTRO usuário
+    // 5. USAMOS O MODEL
     const existingUser = await UserModel.findByEmail(email);
     if (existingUser && existingUser.id !== userId) {
       return res.status(400).json({ message: 'Este email já está em uso por outra conta.' });
     }
 
-    // Atualiza o usuário no banco
+    // 6. USAMOS O MODEL
     const userAtualizado = await UserModel.updateUser(userId, nome, email);
     
     res.json(userAtualizado);
   } catch (error) {
     console.error("Erro ao atualizar perfil:", error);
     res.status(500).json({ message: "Erro interno no servidor." });
+  }
+};
+
+// Função de Admin (já existente)
+export const getAllUsers = async (req, res) => {
+  try {
+    // 7. (Opcional) Podemos criar UserModel.findAll() para isso
+    const { rows } = await pool.query("SELECT id, nome, email, role FROM usuarios ORDER BY nome ASC");
+    res.json(rows);
+  } catch (error) {
+    console.error("Erro ao buscar todos os usuários:", error);
+    res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
   }
 };
