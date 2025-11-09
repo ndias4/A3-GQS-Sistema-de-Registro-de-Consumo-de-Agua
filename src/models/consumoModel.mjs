@@ -72,3 +72,17 @@ export async function obterConsumoMesAtualPorUsuario(usuarioId) {
     const { rows } = await pool.query(query, [usuarioId]);
     return rows[0];
 }
+
+// Calcula o consumo total de litros de um usuário NO DIA ATUAL
+export async function obterConsumoHojePorUsuario(usuarioId) {
+    const query = `
+        SELECT SUM(litros) as consumo_total_hoje 
+        FROM consumos 
+        WHERE 
+            "usuarioId" = $1 AND 
+            DATE("dataLeitura") = CURRENT_DATE;
+    `;
+    // CURRENT_DATE é uma função do PostgreSQL que retorna a data de hoje
+    const { rows } = await pool.query(query, [usuarioId]);
+    return rows[0]; // Retorna { consumo_total_hoje: '123.00' } ou { consumo_total_hoje: null }
+}

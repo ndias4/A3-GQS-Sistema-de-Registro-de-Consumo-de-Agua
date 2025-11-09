@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { adicionarConsumo, obterConsumos, obterConsumoPeriodo, gerarRelatorioMensal,  calcularEstimativaMensal } from "../controllers/consumoController.mjs";
+import { adicionarConsumo, obterConsumos, obterConsumoPeriodo, gerarRelatorioMensal,  calcularEstimativaMensal, getConsumoHoje } from "../controllers/consumoController.mjs";
 import { authMiddleware } from "../middleware/authMiddleware.mjs";
 
 const router = Router();
@@ -13,5 +13,6 @@ router.get("/", obterConsumos);
 router.get("/periodo", obterConsumoPeriodo);
 router.get("/relatorio/mensal", gerarRelatorioMensal);
 router.get("/estimativa/mensal", calcularEstimativaMensal);
+router.get("/hoje", getConsumoHoje);
 
 export default router;

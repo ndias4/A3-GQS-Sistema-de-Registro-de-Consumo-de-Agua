@@ -112,3 +112,19 @@ export async function calcularEstimativaMensal(req, res) {
         res.status(500).json({ message: "Erro interno no servidor." });
     }
 }
+
+// GET /api/consumo/hoje
+export const getConsumoHoje = async (req, res) => {
+  try {
+    const usuarioId = req.usuario.id;
+    const resultado = await ConsumoModel.obterConsumoHojePorUsuario(usuarioId);
+
+    // Se o resultado for 'null' (nenhum consumo hoje), retornamos 0
+    const consumoHoje = parseFloat(resultado.consumo_total_hoje) || 0;
+
+    res.json({ consumo_do_dia: consumoHoje });
+  } catch (error) {
+    console.error("Erro ao buscar consumo do dia:", error);
+    res.status(500).json({ message: "Erro interno no servidor." });
+  }
+};
