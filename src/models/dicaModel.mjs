@@ -7,10 +7,11 @@ export async function listar() {
 }
 
 // Cria uma nova dica no banco
-export async function criar(titulo, descricao, impacto) {
+export async function criar(titulo, descricao, impacto, imagem_url) { // 1. Adicionado imagem_url
     const { rows } = await pool.query(
-        'INSERT INTO dicas (titulo, descricao, impacto) VALUES ($1, $2, $3) RETURNING *',
-        [titulo, descricao, impacto]
+        // 2. Adicionado "imagem_url" na query e $4
+        'INSERT INTO dicas (titulo, descricao, impacto, imagem_url) VALUES ($1, $2, $3, $4) RETURNING *',
+        [titulo, descricao, impacto, imagem_url] // 3. Adicionado imagem_url aos valores
     );
     return rows[0];
 }

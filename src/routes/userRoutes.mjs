@@ -11,8 +11,6 @@ router.post("/login", loginUser);
 // --- ROTAS NOVAS (Protegidas) ---
 // Rota para buscar os dados do próprio usuário
 router.get('/me', authMiddleware, getUserProfile);
-
-// Rota para atualizar os dados do próprio usuário
 router.put('/me', authMiddleware, updateUserProfile);
 
 // Rota de Admin
