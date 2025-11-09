@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUser, loginUser, getAllUsers, getUserProfile, updateUserProfile } from "../controllers/userController.mjs";
+import { registerUser, loginUser, getAllUsers, getUserProfile, updateUserProfile, updateUserPassword } from "../controllers/userController.mjs";
 import { authMiddleware } from "../middleware/authMiddleware.mjs";
 import { isAdmin } from "../middleware/isAdminMiddleware.mjs";
 
@@ -12,6 +12,8 @@ router.post("/login", loginUser);
 // Rota para buscar os dados do próprio usuário
 router.get('/me', authMiddleware, getUserProfile);
 router.put('/me', authMiddleware, updateUserProfile);
+
+router.put('/me/password', authMiddleware, updateUserPassword);
 
 // Rota de Admin
 router.get('/', authMiddleware, isAdmin, getAllUsers);

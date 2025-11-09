@@ -30,3 +30,12 @@ export async function updateUser(id, nome, email) {
   );
   return rows[0];
 }
+
+// Atualiza APENAS a senha de um usuário
+export async function updatePassword(id, newPasswordHash) {
+  const { rows } = await pool.query(
+    'UPDATE usuarios SET senha = $1 WHERE id = $2',
+    [newPasswordHash, id]
+  );
+  return { success: true };
+}

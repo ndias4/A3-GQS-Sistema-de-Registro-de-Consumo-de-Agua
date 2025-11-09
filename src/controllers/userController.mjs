@@ -118,3 +118,26 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
   }
 };
+
+export const updateUserPassword = async (req, res) => {
+    try {
+        const userId = req.usuario.id;
+        const { novaSenha } = req.body;
+
+        // Validação básica da senha
+        if (!novaSenha || novaSenha.length < 6) {
+            return res.status(400).json({ message: 'A nova senha é obrigatória e deve ter pelo menos 6 caracteres.' });
+        }
+
+        // Criptografa a nova senha
+        const hashedPassword = await bcrypt.hash(novaSenha, 10);
+
+        // Salva no banco
+        await UserModel.updatePassword(userId, hashedPassword);
+
+        res.status(200).json({ message: 'Senha atualizada com sucesso.' });
+    } catch (error) {
+        console.error("Erro ao atualizar senha:", error);
+        res.status(500).json({ message: "Erro interno no servidor." });
+    }
+};

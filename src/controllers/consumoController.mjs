@@ -128,3 +128,44 @@ export const getConsumoHoje = async (req, res) => {
     res.status(500).json({ message: "Erro interno no servidor." });
   }
 };
+
+export const getComparativoMensal = async (req, res) => {
+    try {
+        const usuarioId = req.usuario.id;
+
+        // 1. Buscar a tarifa de água
+        const tarifa = await ConsumoModel.obterTarifaAtiva();
+        if (!tarifa || !tarifa.valor_por_litro) {
+            return res.status(500).json({ message: "Nenhuma tarifa de água ativa encontrada." });
+        }
+        const valorPorLitro = parseFloat(tarifa.valor_por_litro);
+
+        // 2. Buscar os consumos (mês atual e anterior)
+        const consumos = await ConsumoModel.obterComparativoMensal(usuarioId);
+
+        const consumoAtualLitros = parseFloat(consumos.consumo_mes_atual) || 0;
+        const consumoAnteriorLitros = parseFloat(consumos.consumo_mes_anterior) || 0;
+
+        // 3. Fazer os cálculos
+        const custoAtual = consumoAtualLitros * valorPorLitro;
+        const custoAnterior = consumoAnteriorLitros * valorPorLitro;
+        
+        // Se o custo anterior for 0, evitamos divisão por zero
+        let economiaPercentual = 0;
+        if (custoAnterior > 0) {
+            economiaPercentual = ((custoAnterior - custoAtual) / custoAnterior) * 100;
+        }
+
+        // 4. Retornar o JSON completo
+        res.json({
+            custo_mes_atual: custoAtual.toFixed(2),
+            custo_mes_anterior: custoAnterior.toFixed(2),
+            economia_reais: (custoAnterior - custoAtual).toFixed(2),
+            economia_percentual: economiaPercentual.toFixed(1)
+        });
+
+    } catch (error) {
+        console.error("Erro ao gerar comparativo mensal:", error);
+        res.status(500).json({ message: "Erro interno no servidor." });
+    }
+};

@@ -86,3 +86,24 @@ export async function obterConsumoHojePorUsuario(usuarioId) {
     const { rows } = await pool.query(query, [usuarioId]);
     return rows[0]; // Retorna { consumo_total_hoje: '123.00' } ou { consumo_total_hoje: null }
 }
+
+// Busca o consumo (em litros) do mês atual E do mês anterior
+export async function obterComparativoMensal(usuarioId) {
+    const query = `
+        SELECT
+            -- Soma para o Mês Atual
+            SUM(CASE WHEN DATE_TRUNC('month', "dataLeitura") = DATE_TRUNC('month', CURRENT_DATE)
+                     THEN litros ELSE 0 END) AS consumo_mes_atual,
+            
+            -- Soma para o Mês Anterior
+            SUM(CASE WHEN DATE_TRUNC('month', "dataLeitura") = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+                     THEN litros ELSE 0 END) AS consumo_mes_anterior
+        FROM
+            consumos
+        WHERE
+            "usuarioId" = $1 AND
+            "dataLeitura" >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month');
+    `;
+    const { rows } = await pool.query(query, [usuarioId]);
+    return rows[0]; // Retorna { consumo_mes_atual: '123', consumo_mes_anterior: '456' }
+}

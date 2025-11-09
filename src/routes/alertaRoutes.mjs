@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { listarAlertasDoUsuario, marcarAlertaComoLido } from "../controllers/alertaController.mjs";
+import { listarAlertasDoUsuario, marcarAlertaComoLido, limparAlertas } from "../controllers/alertaController.mjs";
 import { authMiddleware } from "../middleware/authMiddleware.mjs";
 
 const router = Router();
@@ -12,5 +12,8 @@ router.get("/", listarAlertasDoUsuario);
 
 // Rota para o usuário marcar um alerta específico como lido
 router.patch("/:id/lido", marcarAlertaComoLido);
+
+// Rota para o usuário limpar os alertas
+router.delete('/', limparAlertas);
 
 export default router;

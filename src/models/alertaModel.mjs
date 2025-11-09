@@ -29,3 +29,14 @@ export async function marcarComoLido(alertaId, usuarioId) {
     const { rows } = await pool.query(query, [alertaId, usuarioId]);
     return rows[0];
 }
+
+// Deleta TODOS os alertas de um usuário específico
+export async function limparPorUsuario(usuarioId) {
+    const { rows } = await pool.query(
+      'DELETE FROM alertas WHERE "usuarioId" = $1',
+      [usuarioId]
+    );
+    // DELETE não retorna 'rows' por padrão, a menos que usemos RETURNING,
+    // mas para esta operação, só precisamos saber que executou.
+    return { success: true };
+}

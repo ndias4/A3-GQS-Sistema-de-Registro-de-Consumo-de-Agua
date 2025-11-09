@@ -35,3 +35,15 @@ export async function marcarAlertaComoLido(req, res) {
         res.status(500).json({ message: "Erro interno no servidor." });
     }
 }
+
+// DELETE /api/alertas
+export async function limparAlertas(req, res) {
+    try {
+        const usuarioId = req.usuario.id; // ID vem do token
+        await AlertaModel.limparPorUsuario(usuarioId);
+        res.status(200).json({ message: 'Alertas limpos com sucesso.' });
+    } catch (error) {
+        console.error("Erro ao limpar alertas:", error);
+        res.status(500).json({ message: "Erro interno no servidor." });
+    }
+}
